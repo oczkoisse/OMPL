@@ -1,0 +1,32 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <Platforms>AnyCPU</Platforms>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Content Include="..\x64\$(ConfigurationName)\OMPL.dll" Link="OMPL.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="..\x64\$(ConfigurationName)\boost_serialization-vc141-mt-gd-x64-1_68.dll" Link="boost_serialization-vc141-mt-gd-x64-1_68.dll" Condition="'$(ConfigurationName)'=='Debug'">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="..\x64\$(ConfigurationName)\boost_serialization-vc141-mt-x64-1_68.dll" Link="boost_serialization-vc141-mt-x64-1_68.dll" Condition="'$(ConfigurationName)'=='Release'">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="NativeMethods.cs">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Compile>
+  </ItemGroup>
+
+</Project>
