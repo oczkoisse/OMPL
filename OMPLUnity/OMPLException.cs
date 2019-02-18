@@ -4,6 +4,9 @@ using System.Text;
 
 namespace OMPLUnity
 {
+    /// <summary>
+    /// An exception denoting the failure of native OMPL layer.
+    /// </summary>
     public sealed class OMPLException : Exception
     {
         public OMPLException() { }

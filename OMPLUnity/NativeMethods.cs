@@ -13,6 +13,9 @@ namespace OMPLUnity
     public delegate bool ValidityChecker(double[] state, int length);
 
 
+    /// <summary>
+    /// Encapsulates all the methods interfacing with the native OMPL layer.
+    /// </summary>
     internal static class NativeMethods
     {
         /// <summary>
@@ -61,10 +64,8 @@ namespace OMPLUnity
         public static extern bool HasSetValidityChecker();
 
         /// <summary>
-        /// Find a solution in the state space given initial state <paramref name="initial"/> and goal state <paramref name="goal"/>.
-        /// The solution must be figured out within the number of seconds specified by <paramref name="limit"/>.
-        /// If a solution is figured out, the number of steps in that solution is stored in <paramref name="steps"/>,
-        /// otherwise it has a value of <c>-1</c>.
+        /// Find a solution in the state space given initial state <paramref name="initial"/> and goal state <paramref name="goal"/>
+        /// within the number of seconds specified by <paramref name="limit"/>
         /// </summary>
         /// <param name="initial">The initial state. Must have length equal to <paramref name="dimensions"/>.</param>
         /// <param name="goal">The initial state. Must have length equal to <paramref name="dimensions"/>.</param>

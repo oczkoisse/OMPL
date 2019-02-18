@@ -2,8 +2,18 @@
 
 namespace OMPLUnity
 {
+    /// <summary>
+    /// Managed interface to the native OMPL layer with methods that generate exceptions along with exception safe methods.
+    /// </summary>
     public static class OMPL
     {
+        /// <summary>
+        /// Resets the state space to <c>0</c> dimensions so that 
+        /// <see cref="NativeMethods.DimensionCount()"/> returns <c>0</c>.
+        /// The <see cref="ValidityChecker"/> reference is also reset so that
+        /// <see cref="NativeMethods.HasSetValidityChecker()"/> returns <c>null</c>.
+        /// </summary>
+        /// <exception cref="OMPLException">Thrown when the attempt to reset fails.</exception>
         public static void Reset()
         {
             bool result = NativeMethods.Reset();
@@ -13,9 +23,21 @@ namespace OMPLUnity
             }
         }
 
+        /// <summary>
+        /// Resets the state space to <c>0</c> dimensions so that 
+        /// <see cref="NativeMethods.DimensionCount()"/> returns <c>0</c>.
+        /// The <see cref="ValidityChecker"/> reference is also reset so that
+        /// <see cref="NativeMethods.HasSetValidityChecker()"/> returns <c>null</c>.
+        /// </summary>
+        /// <returns><c>true</c> if the call was successful, <c>false</c> otherwise</returns>
         public static bool TryReset() => NativeMethods.Reset();
-        
 
+        /// <summary>
+        /// Adds a new dimension with bounds [<paramref name="min"/>, <paramref name="max"/>] to the state space.
+        /// </summary>
+        /// <param name="min">Minimum value for the dimension</param>
+        /// <param name="max">Maximum value for the dimension</param>
+        /// <exception cref="OMPLException">Thrown when the attempt to add dimension fails.</exception>
         public static void AddDimension(double min, double max)
         {
             bool result = NativeMethods.AddDimension(min, max);
@@ -23,8 +45,18 @@ namespace OMPLUnity
                 throw new OMPLException($"Failed to add dimension with bounds ({min}, {max})");
         }
 
+        /// <summary>
+        /// Adds a new dimension with bounds [<paramref name="min"/>, <paramref name="max"/>] to the state space.
+        /// </summary>
+        /// <param name="min">Minimum value for the dimension</param>
+        /// <param name="max">Maximum value for the dimension</param>
+        /// <returns><c>true</c> if the call was successful, <c>false</c> otherwise</returns>
         public static bool TryAddDimension(double min, double max) => NativeMethods.AddDimension(min, max);
 
+        /// <summary>
+        /// Get the number of dimensions in the state space.
+        /// </summary>
+        /// <exception cref="InvalidOperationException">Thrown when the attempt to get dimension count fails.</exception>
         public static int DimensionCount
         {
             get
@@ -37,16 +69,43 @@ namespace OMPLUnity
             }
         }
 
+        /// <summary>
+        /// Get the number of dimensions in the state space.
+        /// </summary>
+        /// <returns>The number of dimensions. A value of <c>-1</c> is returned if the call is unsuccessful.</returns>
         public static bool TryGetDimensionCount(out int dimensions)
         {
             dimensions = NativeMethods.DimensionCount();
             return dimensions >= 0;
         }
 
+        /// <summary>
+        /// Sets the validity checker for the state space.
+        /// </summary>
+        /// <param name="checker">A <see cref="ValidityChecker"/> instance</param>
         public static void SetValidityChecker(ValidityChecker checker) => NativeMethods.SetValidityChecker(checker);
 
+        /// <summary>
+        /// Check if the validity checker is set or not.
+        /// </summary>
+        /// <returns><c>true</c> if validity checker is set, <c>false</c> otherwise.</returns>
         public static bool HasSetValidityChecker() => NativeMethods.HasSetValidityChecker();
 
+        /// <summary>
+        /// Find a solution in the state space given initial state <paramref name="initial"/> and goal state <paramref name="goal"/>
+        /// within the number of seconds specified by <paramref name="limit"/>
+        /// </summary>
+        /// <param name="initial">The initial state. Must have length equal to number of dimensions in the state space.</param>
+        /// <param name="goal">The initial state. Must have length equal to number of dimensions in the state space.</param>
+        /// <param name="limit">Number of seconds alloted to find a solution.</param>
+        /// <returns>A 2D array with shape (steps, dimensions).</returns>
+        /// <exception cref="ArgumentNullException">Thrown if <paramref name="initial"/> or <paramref name="goal"/> is <c>null</c></exception>
+        /// <exception cref="ArgumentOutOfRangeException">Thrown if <paramref name="limit"/> <c>&lt;= 0.0</c></exception>
+        /// <exception cref="ArgumentException">
+        /// Thrown if either the lengths of <paramref name="initial"/> and <paramref name="goal"/> mismatch
+        /// or if their lengths mismatch with the number of dimensions in the state space.
+        /// </exception>
+        /// <exception cref="OMPLException">Thrown if unable to create or retrieve the solution.</exception>
         public static double[,] Solve(double[] initial, double[] goal, double limit)
         {
             if (limit <= 0.0)
@@ -87,6 +146,15 @@ namespace OMPLUnity
             return solution2d;
         }
 
+        /// <summary>
+        /// Find a solution in the state space given initial state <paramref name="initial"/> and goal state <paramref name="goal"/>
+        /// within the number of seconds specified by <paramref name="limit"/>
+        /// </summary>
+        /// <param name="initial">The initial state. Must have length equal to number of dimensions in the state space.</param>
+        /// <param name="goal">The initial state. Must have length equal to number of dimensions in the state space.</param>
+        /// <param name="limit">Number of seconds alloted to find a solution.</param>
+        /// <param name="solution">Solution is stored in this paramter as a 2D array of shape (steps, dimensions)</param>
+        /// <returns><c>true</c> if the attempt to find solution was successful, <c>false</c> otherwise.</returns>
         public static bool TrySolve(double[] initial, double[] goal, double limit, out double[,] solution)
         {
             try
