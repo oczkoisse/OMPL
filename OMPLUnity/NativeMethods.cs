@@ -3,6 +3,12 @@ using System;
 
 namespace OMPLUnity
 {
+    /// <summary>
+    /// Checks the validity of a given state, for example, against collisions.
+    /// </summary>
+    /// <param name="state">A 1D array with length <paramref name="length"/></param>
+    /// <param name="length">The length of <paramref name="state"/></param>
+    /// <returns><c>true</c> if the state is free, <c>false</c> otherwie</returns>
     [return: MarshalAs(UnmanagedType.I1)]
     public delegate bool ValidityChecker(double[] state, int length);
 
