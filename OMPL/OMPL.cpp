@@ -10,8 +10,8 @@ namespace ob = ompl::base;
 namespace og = ompl::geometric;
 
 static std::shared_ptr<ob::RealVectorStateSpace> stateSpace = std::make_shared<ob::RealVectorStateSpace>();;
-static std::unique_ptr<og::SimpleSetup> simpleSetup = std::make_unique<og::SimpleSetup>(stateSpace);;
-// Managed Validity Checker should return SUCCESS when a state is valid, FAILURE otherwise
+static std::unique_ptr<og::SimpleSetup> simpleSetup = std::make_unique<og::SimpleSetup>(stateSpace);
+// Managed Validity Checker should return true when a state is valid, false otherwise
 static ValidityChecker managedValidityChecker = nullptr;
 
 static bool isSetup()
