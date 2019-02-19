@@ -49,15 +49,39 @@ namespace Tests
 
             double[,] solution = OMPL.Solve(initial, goal, 5.0);
 
-            for(int i=0; i<solution.GetLength(0); i++)
+            PrintSolution(solution);
+            
+            
+        }
+
+        private void PrintSolution(double[,] solution)
+        {
+            for (int i = 0; i < solution.GetLength(0); i++)
             {
-                for(int j=0; j<solution.GetLength(1); j++)
+                for (int j = 0; j < solution.GetLength(1); j++)
                 {
                     TestContext.Out.Write(solution[i, j] + ", ");
                 }
                 TestContext.Out.WriteLine();
             }
-            
+        }
+
+        [Test]
+        public void TestSolveHighDimensions()
+        {
+            double[] initial = new double[] { 0.13, 0.59, -0.86, 0.0, 0, 0, 0 };
+            double[] goal = new double[] { 0.17, 0.50, -0.73, 358.90, 14.75, 25.74, 14.75 };
+
+            OMPL.AddDimension(-.2, .2);
+            OMPL.AddDimension(-1.0, 1.0);
+            OMPL.AddDimension(-1.0, 0.0);
+            OMPL.AddDimension(0.0, 360.0);
+            OMPL.AddDimension(0.0, 360.0);
+            OMPL.AddDimension(0.0, 360.0);
+            OMPL.AddDimension(0.0, 180.0);
+            double[,] solution = OMPL.Solve(initial, goal, 5);
+
+            PrintSolution(solution);
         }
 
         [Test]
