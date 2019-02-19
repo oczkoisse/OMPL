@@ -3,6 +3,11 @@
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
     <Platforms>AnyCPU</Platforms>
+    <Authors>Rahul Bangar</Authors>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <DocumentationFile>C:\Users\banga\Projects\OMPL\OMPLUnity\OMPLUnity.xml</DocumentationFile>
   </PropertyGroup>
 
   <ItemGroup>

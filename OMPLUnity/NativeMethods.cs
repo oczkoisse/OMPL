@@ -26,7 +26,7 @@ namespace OMPLUnity
         /// </summary>
         /// <returns><c>true</c> if the call was successful, <c>false</c> otherwise</returns>
         [return: MarshalAs(UnmanagedType.I1)]
-        [DllImport("OMPL.dll", CallingConvention = CallingConvention.Cdecl)]
+        [DllImport("OMPL", CallingConvention = CallingConvention.Cdecl)]
         public static extern bool Reset();
 
         /// <summary>
@@ -36,14 +36,14 @@ namespace OMPLUnity
         /// <param name="max">Maximum value for the dimension</param>
         /// <returns><c>true</c> if the call was successful, <c>false</c> otherwise</returns>
         [return: MarshalAs(UnmanagedType.I1)]
-        [DllImport("OMPL.dll", CallingConvention=CallingConvention.Cdecl)]
+        [DllImport("OMPL", CallingConvention=CallingConvention.Cdecl)]
         public static extern bool AddDimension(double min, double max);
 
         /// <summary>
         /// Get the number of dimensions in the state space.
         /// </summary>
         /// <returns>The number of dimensions. A value of <c>-1</c> is returned if the call is unsuccessful.</returns>
-        [DllImport("OMPL.dll", CallingConvention = CallingConvention.Cdecl)]
+        [DllImport("OMPL", CallingConvention = CallingConvention.Cdecl)]
         public static extern int DimensionCount();
 
         /// <summary>
@@ -52,7 +52,7 @@ namespace OMPLUnity
         /// <param name="checker">A <see cref="ValidityChecker"/> instance</param>
         /// <returns><c>true</c> if the call was successful, <c>false</c> otherwise</returns>
         [return: MarshalAs(UnmanagedType.I1)]
-        [DllImport("OMPL.dll", CallingConvention = CallingConvention.Cdecl)]
+        [DllImport("OMPL", CallingConvention = CallingConvention.Cdecl)]
         public static extern bool SetValidityChecker(ValidityChecker checker);
 
         /// <summary>
@@ -60,7 +60,7 @@ namespace OMPLUnity
         /// </summary>
         /// <returns><c>true</c> if validity checker is set, <c>false</c> otherwise.</returns>
         [return: MarshalAs(UnmanagedType.I1)]
-        [DllImport("OMPL.dll", CallingConvention = CallingConvention.Cdecl)]
+        [DllImport("OMPL", CallingConvention = CallingConvention.Cdecl)]
         public static extern bool HasSetValidityChecker();
 
         /// <summary>
@@ -74,7 +74,7 @@ namespace OMPLUnity
         /// <param name="steps">The number of steps in the resulting solution if found, otherwise a value of <c>-1</c></param>
         /// <returns><c>true</c> if the call was successful, <c>false</c> otherwise</returns>
         [return: MarshalAs(UnmanagedType.I1)]
-        [DllImport("OMPL.dll", CallingConvention = CallingConvention.Cdecl)]
+        [DllImport("OMPL", CallingConvention = CallingConvention.Cdecl)]
         public static extern bool Solve(double[] initial , double[] goal, int dimensions, double limit, out int steps);
 
         /// <summary>
@@ -85,7 +85,7 @@ namespace OMPLUnity
         /// <param name="solution">A 1-D array that must have length equal to <paramref name="steps"/> times <paramref name="dimensions"/></param>
         /// <returns><c>true</c> if the call was successful, <c>false</c> otherwise</returns>
         [return: MarshalAs(UnmanagedType.I1)]
-        [DllImport("OMPL.dll", CallingConvention = CallingConvention.Cdecl)]
+        [DllImport("OMPL", CallingConvention = CallingConvention.Cdecl)]
         public static extern bool GetSolution(int steps, int dimensions, double[] solution);
     }
 }
