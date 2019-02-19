@@ -22,7 +22,7 @@ static bool isSetup()
 static bool stateValidityChecker(const ob::State *state)
 {
 	if (managedValidityChecker == nullptr)
-		return false;
+		return true;
 
 	double *values = state->as<ob::RealVectorStateSpace::StateType>()->values;
 	int count = DimensionCount();
