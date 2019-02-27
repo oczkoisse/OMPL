@@ -26,7 +26,7 @@ static bool stateValidityChecker(const ob::State *state)
 
 	double *values = state->as<ob::RealVectorStateSpace::StateType>()->values;
 	int count = DimensionCount();
-	return managedValidityChecker(values, count);
+	return count >= 0 ? managedValidityChecker(values, count) : false;
 }
 
 extern "C"
@@ -122,11 +122,9 @@ extern "C"
 			{
 				simpleSetup->simplifySolution();
 				*steps = (int) (simpleSetup->getSolutionPath().getStateCount());
-
-				return true;
 			}
-			else
-				return false;
+
+			return solved;
 		}
 		catch (std::exception &)
 		{
@@ -134,22 +132,27 @@ extern "C"
 		}
 	}
 
-	/* UNSAFE*/
 	bool GetSolution(int steps, int dimensions, double *solution)
 	{
 		if (!isSetup() || !simpleSetup->getLastPlannerStatus())
 			return false;
 
-		int solutionLength = simpleSetup->getSolutionPath().getStateCount();
-		if (solutionLength != steps)
+		auto &path = simpleSetup->getSolutionPath();
+				
+		if (path.getStateCount() < steps)
+		{
+			path.interpolate(steps);
+		}
+		else if (path.getStateCount() > steps)
+		{
 			return false;
-
+		}
 
 		int dimensionCount = DimensionCount();
 		if (dimensionCount < 0 || dimensionCount != dimensions)
 			return false;
 
-		const auto &sol = simpleSetup->getSolutionPath().getStates();
+		const auto &sol = path.getStates();
 
 		for (int i = 0; i < steps; i++)
 		{
