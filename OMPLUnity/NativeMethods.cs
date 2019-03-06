@@ -10,8 +10,8 @@ namespace OMPLUnity
     /// <param name="length">The length of <paramref name="state"/></param>
     /// <returns><c>true</c> if the state is free, <c>false</c> otherwie</returns>
     [return: MarshalAs(UnmanagedType.I1)]
-    public delegate bool ValidityChecker(double[] state, int length);
-
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+    public delegate bool ValidityChecker([In][MarshalAs(UnmanagedType.LPArray, SizeParamIndex = 1)]double[] state, int length);
 
     /// <summary>
     /// Encapsulates all the methods interfacing with the native OMPL layer.
@@ -62,6 +62,15 @@ namespace OMPLUnity
         [return: MarshalAs(UnmanagedType.I1)]
         [DllImport("OMPL", CallingConvention = CallingConvention.Cdecl)]
         public static extern bool HasSetValidityChecker();
+
+        /// <summary>
+        /// Sets the resolution for the validity checker
+        /// </summary>
+        /// <param name="resolution">Resolution of the validity checker between 0 to 1</param>
+        /// <returns><c>true</c> if the call was successful, <c>false</c> otherwise.</returns>
+        [return: MarshalAs(UnmanagedType.I1)]
+        [DllImport("OMPL", CallingConvention = CallingConvention.Cdecl)]
+        public static extern bool SetValidityCheckerResolution(double resolution);
 
         /// <summary>
         /// Find a solution in the state space given initial state <paramref name="initial"/> and goal state <paramref name="goal"/>

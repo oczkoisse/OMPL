@@ -7,6 +7,11 @@ namespace OMPLUnity
     /// </summary>
     public static class OMPL
     {
+        // Necessary to allow passing of lambda functions as the delegate object
+        // Otherwise, they'll be garbage collected soon after since no reference
+        // to them may exist on the managed side
+        private static ValidityChecker checker;
+
         /// <summary>
         /// Resets the state space to <c>0</c> dimensions so that 
         /// <see cref="NativeMethods.DimensionCount()"/> returns <c>0</c>.
@@ -16,11 +21,8 @@ namespace OMPLUnity
         /// <exception cref="OMPLException">Thrown when the attempt to reset fails.</exception>
         public static void Reset()
         {
-            bool result = NativeMethods.Reset();
-            if (!result)
-            {
-                throw new OMPLException("Failed to reset");
-            }
+            if (!TryReset())
+                throw new OMPLException("Unable to reset");
         }
 
         /// <summary>
@@ -30,7 +32,13 @@ namespace OMPLUnity
         /// <see cref="NativeMethods.HasSetValidityChecker()"/> returns <c>null</c>.
         /// </summary>
         /// <returns><c>true</c> if the call was successful, <c>false</c> otherwise</returns>
-        public static bool TryReset() => NativeMethods.Reset();
+        public static bool TryReset()
+        {
+            bool result = NativeMethods.Reset();
+            if (result)
+                checker = null;
+            return result;
+        }
 
         /// <summary>
         /// Adds a new dimension with bounds [<paramref name="min"/>, <paramref name="max"/>] to the state space.
@@ -83,13 +91,50 @@ namespace OMPLUnity
         /// Sets the validity checker for the state space.
         /// </summary>
         /// <param name="checker">A <see cref="ValidityChecker"/> instance</param>
-        public static void SetValidityChecker(ValidityChecker checker) => NativeMethods.SetValidityChecker(checker);
+        /// <returns><c>true</c> if the call was successful, <c>false</c> otherwise</returns>
+        public static bool TrySetValidityChecker(ValidityChecker checker)
+        {
+            bool result = NativeMethods.SetValidityChecker(checker);
+            if (result)
+                OMPL.checker = checker;
+            return result;
+        }
+
+        /// <summary>
+        /// Sets the validity checker for the state space.
+        /// </summary>
+        /// <param name="checker">A <see cref="ValidityChecker"/> instance</param>
+        /// <exception cref="OMPLException">Thrown when the native call fails</exception>
+        public static void SetValidityChecker(ValidityChecker checker)
+        {
+            if (!TrySetValidityChecker(checker))
+                throw new OMPLException("Unable to set validity checker");
+        }
 
         /// <summary>
         /// Check if the validity checker is set or not.
         /// </summary>
         /// <returns><c>true</c> if validity checker is set, <c>false</c> otherwise.</returns>
         public static bool HasSetValidityChecker() => NativeMethods.HasSetValidityChecker();
+
+        /// <summary>
+        /// Sets the resolution for the validity checker
+        /// </summary>
+        /// <param name="resolution">the resolution as a percentages of the space's maximum extent at which to check for valid states</param>
+        /// <returns><c>true</c> if the native call was successful, <c>false</c> otherwise</returns>
+        public static bool TrySetValidityCheckerResolution(double resolution) => NativeMethods.SetValidityCheckerResolution(resolution);
+
+        /// <summary>
+        /// Sets the resolution for the validity checker
+        /// </summary>
+        /// <param name="resolution">the resolution as a percentages of the space's maximum extent at which to check for valid states</param>
+        /// <exception cref="OMPLException">Thrown when the native call to set validity checker resolution fails</exception>
+        public static void SetValidityCheckerResolution(double resolution)
+        {
+            bool result = TrySetValidityCheckerResolution(resolution);
+            if (!result)
+                throw new OMPLException("Failed to set validity checker resolution");
+        }
 
         /// <summary>
         /// Find a solution in the state space given initial state <paramref name="initial"/> and goal state <paramref name="goal"/>
@@ -128,7 +173,7 @@ namespace OMPLUnity
 
             if (!NativeMethods.Solve(initial, goal, dimensions, limit, out int steps))
                 throw new OMPLException("Could not create a solution");
-
+            
             double[] solution = new double[steps * dimensions];
 
             if (!NativeMethods.GetSolution(steps, dimensions, solution))
