@@ -135,6 +135,9 @@ extern "C"
 			{
 				double planningTime = simpleSetup->getLastPlanComputationTime();
 				simpleSetup->simplifySolution(planningTime < time ? time - planningTime : 0.0);
+				
+				simpleSetup->getSolutionPath().interpolate();
+
 				*steps = (int) (simpleSetup->getSolutionPath().getStateCount());
 			}
 
@@ -152,15 +155,8 @@ extern "C"
 			return false;
 
 		auto &path = simpleSetup->getSolutionPath();
-		
-		if (path.getStateCount() < steps)
-        {
-			path.interpolate(steps);
-		}
-		else if (path.getStateCount() > steps)
-		{
+		if (steps != path.getStateCount())
 			return false;
-		}
 
 		int dimensionCount = DimensionCount();
 		if (dimensionCount < 0 || dimensionCount != dimensions)
