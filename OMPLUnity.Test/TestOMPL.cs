@@ -41,12 +41,7 @@ namespace Tests
             OMPL.AddDimension(0.0, 500.0);
             double[] initial = new double[] { -.5, -34.0, 0.0 };
             double[] goal = new double[] { .9, -49.0, 500.0 };
-
-            OMPL.SetValidityChecker((double[] state, int length) =>
-            {
-                return true;
-            });
-
+            
             double[,] solution = OMPL.Solve(initial, goal, 5.0);
 
             PrintSolution(solution);
@@ -69,7 +64,7 @@ namespace Tests
         [Test]
         public void TestSolveHighDimensions()
         {
-            double[] initial = new double[] { 0.13, 0.59, -0.86, 0.0, 0, 0, 0 };
+            double[] initial = new double[] { 0.13, 0.59, -0.86, 0.0, 0.0, 0.0, 0.0 };
             double[] goal = new double[] { 0.17, 0.50, -0.73, 358.90, 14.75, 25.74, 14.75 };
 
             OMPL.AddDimension(-.2, .2);
@@ -79,7 +74,7 @@ namespace Tests
             OMPL.AddDimension(0.0, 360.0);
             OMPL.AddDimension(0.0, 360.0);
             OMPL.AddDimension(0.0, 180.0);
-            double[,] solution = OMPL.Solve(initial, goal, 5);
+            double[,] solution = OMPL.Solve(initial, goal, 5.0);
 
             PrintSolution(solution);
         }
@@ -89,20 +84,81 @@ namespace Tests
         {
             Assert.IsFalse(OMPL.HasSetValidityChecker());
 
-            OMPL.SetValidityChecker((double[] state, int length) =>
-            {
-                return true;
-            });
+            OMPL.SetValidityChecker((double[] state, int length) => false);
 
             Assert.IsTrue(OMPL.HasSetValidityChecker());
         }
 
+        [Test]
+        public void TestAlwaysTrueValidityChecker()
+        {
+            
+            OMPL.SetValidityChecker((double[] state, int length) => true);
+
+            double[] initial = new double[] { 0.13, 0.59, -0.86, 0.0, 0.0, 0.0, 0.0 };
+            double[] goal = new double[] { 0.17, 0.50, -0.73, 358.90, 14.75, 25.74, 14.75 };
+
+            OMPL.AddDimension(-.2, .2);
+            OMPL.AddDimension(-1.0, 1.0);
+            OMPL.AddDimension(-1.0, 0.0);
+            OMPL.AddDimension(0.0, 360.0);
+            OMPL.AddDimension(0.0, 360.0);
+            OMPL.AddDimension(0.0, 360.0);
+            OMPL.AddDimension(0.0, 180.0);
+            
+            Assert.IsTrue(OMPL.TrySolve(initial, goal, 5.0, out _));
+        }
+        private static double x = 0.0f;
+        
+        [Test]
+        public void TestNonConstValidityChecker()
+        {
+            OMPL.SetValidityChecker((double[] state, int length) =>
+            {
+                x = state[0];
+                TestContext.Out.WriteLine(x);
+                return true;
+            });
+
+            double[] initial = new double[] { 0.13, 0.59, -0.86, 0.0, 0.0, 0.0, 0.0 };
+            double[] goal = new double[] { 0.17, 0.50, -0.73, 358.90, 14.75, 25.74, 14.75 };
+
+            OMPL.AddDimension(-.2, .2);
+            OMPL.AddDimension(-1.0, 1.0);
+            OMPL.AddDimension(-1.0, 0.0);
+            OMPL.AddDimension(0.0, 360.0);
+            OMPL.AddDimension(0.0, 360.0);
+            OMPL.AddDimension(0.0, 360.0);
+            OMPL.AddDimension(0.0, 180.0);
+
+            Assert.IsTrue(OMPL.TrySolve(initial, goal, 5.0, out _));
+        }
+
+        [Test]
+        public void TestAlwaysFalseValidityChecker()
+        {
+            OMPL.SetValidityChecker((double[] state, int length) => false);
+
+            double[] initial = new double[] { 0.13, 0.59, -0.86, 0.0, 0.0, 0.0, 0.0 };
+            double[] goal = new double[] { 0.17, 0.50, -0.73, 358.90, 14.75, 25.74, 14.75 };
+
+            OMPL.AddDimension(-.2, .2);
+            OMPL.AddDimension(-1.0, 1.0);
+            OMPL.AddDimension(-1.0, 0.0);
+            OMPL.AddDimension(0.0, 360.0);
+            OMPL.AddDimension(0.0, 360.0);
+            OMPL.AddDimension(0.0, 360.0);
+            OMPL.AddDimension(0.0, 180.0);
+
+            Assert.IsFalse(OMPL.TrySolve(initial, goal, 5.0, out _));
+        }
 
         [TearDown]
         public void TearDown()
         {
             OMPL.Reset();
         }
+
     }
 
 }
