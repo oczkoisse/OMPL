@@ -133,7 +133,8 @@ extern "C"
 
 			if (solved)
 			{
-				simpleSetup->simplifySolution();
+				double planningTime = simpleSetup->getLastPlanComputationTime();
+				simpleSetup->simplifySolution(planningTime < time ? time - planningTime : 0.0);
 				*steps = (int) (simpleSetup->getSolutionPath().getStateCount());
 			}
 
