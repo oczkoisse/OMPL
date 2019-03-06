@@ -13,8 +13,8 @@ extern "C"
 	
 	EXPORT bool SetValidityChecker(ValidityChecker checker);
 	EXPORT bool HasSetValidityChecker();
+	EXPORT bool SetValidityCheckerResolution(double resolution);
 
 	EXPORT bool Solve(double *initial, double *goal, int length, double limit, int *steps);
-
 	EXPORT bool GetSolution(int steps, int dimensions, double *solution);
 }

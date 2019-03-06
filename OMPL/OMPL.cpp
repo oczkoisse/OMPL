@@ -26,7 +26,7 @@ static bool stateValidityChecker(const ob::State *state)
 
 	double *values = state->as<ob::RealVectorStateSpace::StateType>()->values;
 	int count = DimensionCount();
-	return count >= 0 ? managedValidityChecker(values, count) : false;
+	return count > 0 ? managedValidityChecker(values, count) : false;
 }
 
 extern "C"
@@ -96,6 +96,19 @@ extern "C"
 		return managedValidityChecker != nullptr;
 	}
 
+	bool SetValidityCheckerResolution(double resolution)
+	{
+		if (resolution < 0.0)
+			resolution = 0.0;
+		if (resolution > 1.0)
+			resolution = 1.0;
+
+		if (!isSetup())
+			return false;
+
+		simpleSetup->getSpaceInformation()->setStateValidityCheckingResolution(resolution);
+	}
+
 	bool Solve(double *initial, double *goal, int dimensions, double time, int *steps)
 	{
 		*steps = -1;
@@ -138,9 +151,9 @@ extern "C"
 			return false;
 
 		auto &path = simpleSetup->getSolutionPath();
-				
+		
 		if (path.getStateCount() < steps)
-		{
+        {
 			path.interpolate(steps);
 		}
 		else if (path.getStateCount() > steps)
